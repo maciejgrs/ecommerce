@@ -1,29 +1,25 @@
- 
+const path = require('path');
+
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express();
-const adminRoutes = require('./routes/admin')
-const shopRoutes = require('./routes/shop')
-app.use(express.urlencoded({extended: false}))
 
-// app.use(express.json())
-const arr = [shopRoutes, adminRoutes]
-app.use(express.json())
- app.use('/admin', adminRoutes)
- app.use(shopRoutes)
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
-// arr.forEach(el => app.use(el))
- 
+const adminData = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+// app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/admin', adminData.routes);
+app.use(shopRoutes);
+
 app.use((req, res, next) => {
-    res.status(404).send('<h1>Page not found 404</h1>')
-})
- 
-// app.use('/user',(req, res, next) => {
-//     console.log('in the another middle ware');
-//     res.send(`<p>users</p> <a href="/">Home</a>`)
-  
-// })
+  res.status(404).send('Page not found 404')
+});
 
-
-
-
-app.listen(3000)
+app.listen(3000);
